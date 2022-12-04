@@ -44,7 +44,12 @@ targets = {
 
 # variable para nivel
 
-level = 3
+level = 1
+points = 0
+shot = False
+total_shots = 0
+mode = 0
+ammo = 0
 
 # el juego es un arcade , en mi caso sera un taller que arreglara vehiculos
 # usaremos una llave como utensilio
@@ -127,6 +132,16 @@ def move_level(coords):
                 coords[i][j] = (my_coords[0] - 2**i, my_coords[1])
     return coords
 
+def check_shot(targets, coords):
+    global points
+    mouse_pos = pygame.mouse.get_pos()
+    for i in range(len(targets)):
+        for j in range(len(targets[i])):
+            if targets[i][j].collidepoint(mouse_pos):
+                coords[i].pop(j)
+                points += 10 + 10 * (i**2)
+    return coords
+
 
 
 # posiciones iniciales coordenades
@@ -153,6 +168,13 @@ for i in range(4):
 # realizando pruebas
 
 run = True
+
+
+def draw_score():
+
+    pass
+
+
 while run:
     timer.tick(fps)
     # llenado la pantalla
@@ -164,21 +186,46 @@ while run:
     if level == 1:
         target_boxes = draw_level(one_coords)
         one_coords = move_level(one_coords)
+        if shot:
+            one_coords = check_shot(target_boxes, one_coords)
+            shot = False
     elif level == 2:
         target_boxes = draw_level(two_coords)
-        two_coords =move_level(two_coords)
+        two_coords = move_level(two_coords)
+        if shot:
+            two_coords = check_shot(target_boxes, two_coords)
+            shot = False
+
     elif level == 3:
         target_boxes = draw_level(three_coords)
         three_coords = move_level(three_coords)
+        if shot:
+            three_coords = check_shot(target_boxes, three_coords)
+            shot = False
 
     # dibujando la llave con una funcion
     if level > 0:
         draw_wrench()
+        draw_score()
     # evitando un loop infinito por medio de un evento de pygame
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_position = pygame.mouse.get_pos()
+            if (0 < mouse_position[0] < WIDTH) and (0 < mouse_position [1] < HEIGHT -200):
+                shot = True
+                total_shots += 1
+                if mode == 1:
+                    ammo -= 1
+
+    if level > 0:
+        if target_boxes == [[], [], []] and level < 3:
+            level += 1
+
+
+
 
     pygame.display.flip()  # este comando dice que llevemos all a la pantalla y lo mostremos
 pygame.quit()
