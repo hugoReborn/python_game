@@ -50,6 +50,8 @@ shot = False
 total_shots = 0
 mode = 0
 ammo = 0
+time_passed = 0
+time_remmaining = 0
 
 # el juego es un arcade , en mi caso sera un taller que arreglara vehiculos
 # usaremos una llave como utensilio
@@ -75,6 +77,14 @@ for i in range(1, 4):
             target_images[i - 1].append(
                 pygame.transform.scale(pygame.image.load(f'assets/targets/{i}/{j}.png'),
                                        (120 - (j * 18), 80 - (j * 12))))
+
+
+def draw_score():
+    point_text = font.render(f'Points: {points}', True, 'black')
+    screen.blit(point_text, (320, 660))
+    shot_text = font.render(f'Total Shots: {total_shots}', True, 'black')
+    screen.blit(shot_text, (320, 687))
+
 
 
 def draw_wrench():
@@ -170,9 +180,7 @@ for i in range(4):
 run = True
 
 
-def draw_score():
 
-    pass
 
 
 while run:
